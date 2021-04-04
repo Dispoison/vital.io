@@ -2,6 +2,7 @@ import random
 from entity import Entity
 from config import *
 
+
 class Food(Entity):
     def __init__(self, pos, color, tile_size):
         Entity.__init__(self, pos[0], pos[1], color, tile_size)

@@ -1,7 +1,6 @@
 from config import *
 import math
 from entity import Entity
-import random
 
 class Player(Entity):
     def __init__(self, pos, color, tile_size):
@@ -45,17 +44,3 @@ class Player(Entity):
         self.movement_right = not self.x + self.tile_size // 2 >= MAP_SIZE_X
         self.movement_up = not self.y - self.tile_size // 2 < 0
         self.movement_down = not self.y + self.tile_size // 2 >= MAP_SIZE_Y
-
-
-
-'''
-    def food_collision(self, food_obj_list):
-        for food_obj in food_obj_list:
-            if self.x + self.tile_size - 5 > food_obj.x - food_obj.tile_size and \
-                    self.x - self.tile_size + 5 < food_obj.x + food_obj.tile_size and \
-                    self.y + self.tile_size - 5 > food_obj.y - food_obj.tile_size and \
-                    self.y - self.tile_size + 5 < food_obj.y + food_obj.tile_size:
-                print('collision')
-                self.color = (random.randrange(256), random.randrange(256), random.randrange(256))
-                food_obj_list.remove(food_obj)
-                self.tile_size += 1'''

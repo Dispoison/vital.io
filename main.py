@@ -14,13 +14,13 @@ player = Player(PLAYER_START_POS, PLAYER_COLOR, PLAYER_START_TILE_HALF)
 food_obj_list = Food.food_list_creation(FOOD_AMOUNT)
 map = Map(food_obj_list)
 camera = Camera(player.get_pos())
-drawer = Drawer()
+drawer = Drawer(camera)
 
 while True:
     sc.fill('black')
     camera.camera_update(player.get_pos())
-    drawer.draw_grid(sc, camera.grid_bias, camera.drawable_cells_amount)
-    drawer.draw_food(sc, food_obj_list, camera.camera_top_left_pos_on_map_x, camera.camera_top_left_pos_on_map_y)
+    drawer.draw_grid(sc)
+    drawer.draw_food(sc, food_obj_list)
     drawer.draw_player(sc, player)
 
     pg.display.flip()

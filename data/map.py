@@ -1,4 +1,4 @@
-from config import *
+from cfg.config import *
 
 
 class Map:

@@ -1,33 +1,33 @@
-from drawer import *
-from food import *
-from player import *
-from map import *
-from camera import *
+from data.drawer import *
+from data.food import *
+from data.player import *
+from data.map import *
+from data.camera import *
 
 
 pg.init()
-pg.display.set_caption('vital.io')
+pg.display.set_caption(WINDOW_TITLE)
 sc = pg.display.set_mode([WINDOW_SIZE_X, WINDOW_SIZE_Y])
 clock = pg.time.Clock()
 player = Player(PLAYER_START_POS, PLAYER_COLOR, PLAYER_START_TILE_HALF)
 
-food_obj_list = Food.food_list_creation(FOOD_AMOUNT)
-map = Map(food_obj_list)
+Food.food_list_creation(FOOD_AMOUNT)
+map = Map(Food.food_obj_list)
 camera = Camera(player.get_pos())
 drawer = Drawer(camera)
 
 while True:
-    sc.fill('black')
-    camera.camera_update(player.get_pos())
+    sc.fill(map.background_color)
 
-    drawer.draw(sc, food_obj_list, player)
+    camera.camera_update(player.get_pos())
+    Food.food_list_update(FOOD_AMOUNT)
+    Food.food_list_on_screen_update((camera.top_left_x, camera.top_left_y, camera.bot_right_x, camera.bot_right_y))
+
+    drawer.draw(sc, map, Food.food_obj_on_screen_list, player)
 
     pg.display.flip()
     delta_fps = clock.tick(FPS)
-
-    player.movement(pg, delta_fps)
-    player.collision(food_obj_list)
-    Food.food_list_update(food_obj_list, FOOD_AMOUNT)
+    player.update(pg, delta_fps, Food.food_obj_list, Food.food_obj_on_screen_list)
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -35,4 +35,5 @@ while True:
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 4 or event.button == 5:
                 camera.camera_zoom(Camera.ZOOM_MODE[event.button])
+    pg.display.set_caption(f'{WINDOW_TITLE} - {"%.0f" % clock.get_fps()}')
 

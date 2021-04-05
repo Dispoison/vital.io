@@ -1,6 +1,6 @@
-from config import *
+from cfg.config import *
 import math
-from entity import Entity
+from data.entity import Entity
 
 class Player(Entity):
     def __init__(self, pos, color, tile_size):
@@ -10,9 +10,13 @@ class Player(Entity):
         self.movement_up = True
         self.movement_down = True
 
+    def update(self, pg, delta_fps, food_obj_list, food_obj_on_screen_list):
+        self.movement(pg, delta_fps)
+        self.collision(food_obj_list, food_obj_on_screen_list)
+
     def movement(self, pg, delta_fps):
         key = pg.key.get_pressed()
-        movement_speed = 1 / float(delta_fps)
+        movement_speed = delta_fps / 500
         x, y = 0, 0
         if key[pg.K_a]:
             x = -PLAYER_MOVEMENT_SPEED * movement_speed * self.movement_left
@@ -28,16 +32,16 @@ class Player(Entity):
         self.x += x
         self.y += y
 
-    def collision(self, food_obj_list):
-        self.food_collision(food_obj_list)
+    def collision(self, food_obj_list, food_obj_on_screen_list):
+        self.food_collision(food_obj_list, food_obj_on_screen_list)
         self.wall_collision()
 
-    def food_collision(self, food_obj_list):
-        for food_obj in food_obj_list:
-            if math.sqrt((self.x - food_obj.x)**2 + (self.y - food_obj.y)**2) < self.tile_size:
+    def food_collision(self, food_obj_list, food_obj_on_screen_list):
+        for food in food_obj_on_screen_list:
+            if math.sqrt((self.x - food.x)**2 + (self.y - food.y)**2) < self.tile_size:
                 #self.color = (random.randrange(256), random.randrange(256), random.randrange(256))
-                food_obj_list.remove(food_obj)
-                self.tile_size += 2
+                food_obj_list.remove(food)
+                self.tile_size += FOOD_ENERGY * food.tile_size / FOOD_CELL_TILE_HALF
 
     def wall_collision(self):
         self.movement_left = not self.x - self.tile_size // 2 < 0

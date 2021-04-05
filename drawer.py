@@ -7,10 +7,15 @@ class Drawer:
         self.font = pg.font.Font('freesansbold.ttf', 32)
         self.camera = camera
 
+    def draw(self, sc, food_obj_list, player):
+        self.draw_grid(sc)
+        self.draw_food(sc, food_obj_list)
+        self.draw_player(sc, player)
+
     def draw_food(self, sc, food_obj_list):
-        [pg.draw.circle(sc, food_obj.color, ((food_obj.x - self.camera.camera_top_left_pos_on_map_x),
-                                            (food_obj.y - self.camera.camera_top_left_pos_on_map_y)),
-                                            FOOD_CELL_TILE_HALF)
+        [pg.draw.circle(sc, food_obj.color, ((food_obj.x - self.camera.camera_top_left_x) * self.camera.zoom,
+                                             (food_obj.y - self.camera.camera_top_left_y) * self.camera.zoom),
+                        FOOD_CELL_TILE_HALF * self.camera.zoom)
          for food_obj in food_obj_list]
 
     def draw_grid(self, sc):
@@ -19,16 +24,18 @@ class Drawer:
         end_row = self.camera.end_cell[0]
         end_col = self.camera.end_cell[1]
 
-        [[pg.draw.rect(sc, (20, 20, 20),
-                       ((x * MAP_CELL_TILE) - self.camera.camera_top_left_pos_on_map_x,
-                        (y * MAP_CELL_TILE) - self.camera.camera_top_left_pos_on_map_y,
-                        MAP_CELL_TILE, MAP_CELL_TILE),
-                       1, border_radius=MAP_CELL_TILE_RADIUS)
+        [[pg.draw.rect(sc, (10, 10, 10),
+                       ((((x * MAP_CELL_TILE) - self.camera.camera_top_left_x) * self.camera.zoom),
+                        (((y * MAP_CELL_TILE) - self.camera.camera_top_left_y) * self.camera.zoom),
+                        MAP_CELL_TILE * self.camera.zoom, MAP_CELL_TILE * self.camera.zoom),
+                       1, border_radius=int(MAP_CELL_TILE_RADIUS * self.camera.zoom))
           for y in range(start_col, end_col)]
          for x in range(start_row, end_row)]
 
     def draw_player(self, sc, player):
-        pg.draw.circle(sc, player.color, (CAMERA_SIZE_X_HALF, CAMERA_SIZE_Y_HALF), player.tile_size)
+        pg.draw.circle(sc, player.color, (((player.x - self.camera.camera_top_left_x) * self.camera.zoom),
+                                          (player.y - self.camera.camera_top_left_y) * self.camera.zoom),
+                       player.tile_size * self.camera.zoom)
         score = player.tile_size - PLAYER_START_TILE_HALF
         score = self.font.render(f'Score: {score}', True, (0, 127, 255))
         score_rect = score.get_rect()

@@ -19,9 +19,8 @@ drawer = Drawer(camera)
 while True:
     sc.fill('black')
     camera.camera_update(player.get_pos())
-    drawer.draw_grid(sc)
-    drawer.draw_food(sc, food_obj_list)
-    drawer.draw_player(sc, player)
+
+    drawer.draw(sc, food_obj_list, player)
 
     pg.display.flip()
     delta_fps = clock.tick(FPS)

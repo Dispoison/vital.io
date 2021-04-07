@@ -1,3 +1,4 @@
+import pygame as pg
 from data.drawer import *
 from data.food import *
 from data.player import *
@@ -13,8 +14,8 @@ player = Player(PLAYER_START_POS, PLAYER_COLOR, PLAYER_START_TILE_HALF)
 
 Food.food_list_creation(FOOD_AMOUNT)
 map = Map(Food.food_obj_list)
-camera = Camera(player.get_pos())
-drawer = Drawer(camera)
+camera = Camera(player.get_pos(), map)
+drawer = Drawer(pg, camera)
 
 while True:
     sc.fill(map.background_color)

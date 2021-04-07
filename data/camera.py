@@ -6,12 +6,14 @@ class Camera:
     OUT = 'OUT'
     ZOOM_MODE = {4: IN, 5: OUT}
 
-    def __init__(self, pl_pos):
+    def __init__(self, pl_pos, map):
         self.size_x = WINDOW_SIZE_X
         self.size_y = WINDOW_SIZE_Y
         self.size_x_half = self.size_x // 2
         self.size_y_half = self.size_y // 2
+        self.map = map
 
+        self.zoom_counter = 0
         self.zoom = 1
         self.camera_update(pl_pos)
 
@@ -31,12 +33,14 @@ class Camera:
         self.end_cell = (end_row, end_col)
 
     def camera_zoom(self, mode):
-        if mode == Camera.IN and self.zoom < ZOOM_IN_LIMIT - 0.01:
-            self.zoom += 0.1
+        if mode == Camera.IN and self.zoom_counter < ZOOM_IN_LIMIT:
+            self.zoom_counter += ZOOM_STEP
+            self.zoom = 2 ** self.zoom_counter
             self.set_size_x(WINDOW_SIZE_X / self.zoom)
             self.set_size_y(WINDOW_SIZE_Y / self.zoom)
-        elif mode == Camera.OUT and self.zoom > ZOOM_OUT_LIMIT + 0.01:
-            self.zoom -= 0.1
+        elif mode == Camera.OUT and self.zoom_counter > ZOOM_OUT_LIMIT:
+            self.zoom_counter -= ZOOM_STEP
+            self.zoom = 2 ** self.zoom_counter
             self.set_size_x(WINDOW_SIZE_X / self.zoom)
             self.set_size_y(WINDOW_SIZE_Y / self.zoom)
 

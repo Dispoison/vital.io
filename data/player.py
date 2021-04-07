@@ -2,6 +2,7 @@ from cfg.config import *
 import math
 from data.entity import Entity
 
+
 class Player(Entity):
     def __init__(self, pos, color, tile_size):
         Entity.__init__(self, pos[0], pos[1], color, tile_size)

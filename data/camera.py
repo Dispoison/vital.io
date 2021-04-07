@@ -42,11 +42,13 @@ class Camera:
 
     def zoom_update(self):
         self.zoom = 2 ** self.zoom_counter
+        zoom_rounded = 2 ** round(self.zoom_counter)
         self.set_size_x(WINDOW_SIZE_X / self.zoom)
         self.set_size_y(WINDOW_SIZE_Y / self.zoom)
-        self.map.tile_size = int(MAP_CELL_TILE // self.zoom)
+        self.map.tile_size = int(MAP_CELL_TILE // zoom_rounded)
         self.map.rows = MAP_SIZE_X // self.map.tile_size
         self.map.cols = MAP_SIZE_Y // self.map.tile_size
+        print(f'{self.map.rows} {self.map.cols}')
 
     def set_size_x(self, value):
         self.size_x = int(value)

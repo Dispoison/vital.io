@@ -9,7 +9,7 @@ class Food(Entity):
 
     def __init__(self, pos, color, tile_size):
         Entity.__init__(self, pos[0], pos[1], color, tile_size)
-        self.tile_size *= random.randrange(80, 300) / 100
+        self.tile_size *= random.randrange(80, 130) / 100
 
     def is_food_on_screen(self, top_left_x, top_left_y, bottom_right_x, bottom_right_y):
         top_left_x -= self.tile_size

@@ -21,22 +21,22 @@ class Drawer:
 
         for x in range(start_row, end_row):
             for y in range(start_col, end_col):
-                rect_x = (x * map.grid_size - self.camera.top_left_x) * self.camera.zoom
-                rect_y = (y * map.grid_size - self.camera.top_left_y) * self.camera.zoom
-                rect_size = map.grid_size * self.camera.zoom
+                rect_x = (x * map.tile_size - self.camera.top_left_x) * self.camera.zoom
+                rect_y = (y * map.tile_size - self.camera.top_left_y) * self.camera.zoom
+                rect_size = map.tile_size * self.camera.zoom
                 rect = rect_x, rect_y, rect_size, rect_size
-                border_radius = int(MAP_CELL_TILE_RADIUS * self.camera.zoom)
+                border_radius = MAP_CELL_TILE_RADIUS
 
-                self.pg.draw.rect(sc, map.grid_color, rect, MAP_CELL_WIDTH, border_radius=border_radius)
+                self.pg.draw.rect(sc, map.tile_color, rect, MAP_CELL_WIDTH, border_radius=border_radius)
 
     def draw_food(self, sc, food_obj_list):
         for food in food_obj_list:
             circle_x = (food.x - self.camera.top_left_x) * self.camera.zoom
             circle_y = (food.y - self.camera.top_left_y) * self.camera.zoom
             circle = circle_x, circle_y
-            circle_radius = food.tile_size * self.camera.zoom
+            circle_diameter = max(food.tile_size * self.camera.zoom, 1)
 
-            self.pg.draw.circle(sc, food.color, circle, circle_radius)
+            self.pg.draw.circle(sc, food.color, circle, circle_diameter)
 
     def draw_player(self, sc, player):
         circle_x = (player.x - self.camera.top_left_x) * self.camera.zoom
@@ -48,7 +48,7 @@ class Drawer:
 
     def draw_player_score(self, sc, player):
         score = player.tile_size - PLAYER_START_TILE_HALF
-        score = self.font.render(f'Score: {"%.1f" % score}', True, SCORE_TEXT_COLOR)
+        score = self.font.render(f'Score: {"%.0f" % score}', True, SCORE_TEXT_COLOR)
         score_rect = score.get_rect()
         score_rect.center = (score_rect.width - 30, WINDOW_SIZE_Y - 40)
         sc.blit(score, score_rect)

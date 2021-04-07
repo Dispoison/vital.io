@@ -5,7 +5,6 @@ from data.player import *
 from data.map import *
 from data.camera import *
 
-
 pg.init()
 pg.display.set_caption(WINDOW_TITLE)
 sc = pg.display.set_mode([WINDOW_SIZE_X, WINDOW_SIZE_Y])

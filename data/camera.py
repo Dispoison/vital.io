@@ -24,25 +24,29 @@ class Camera:
         self.bot_right_x = self.top_left_x + self.size_x
         self.bot_right_y = self.top_left_y + self.size_y
 
-        start_row = max(int(self.top_left_x / MAP_CELL_TILE), 0)
-        start_col = max(int(self.top_left_y / MAP_CELL_TILE), 0)
+        start_row = max(int(self.top_left_x / self.map.tile_size), 0)
+        start_col = max(int(self.top_left_y / self.map.tile_size), 0)
         self.start_cell = (start_row, start_col)
 
-        end_row = min(int(self.bot_right_x / MAP_CELL_TILE) + 1, ROWS)
-        end_col = min(int(self.bot_right_y / MAP_CELL_TILE) + 1, COLS)
+        end_row = min(int(self.bot_right_x / self.map.tile_size) + 1, self.map.rows)
+        end_col = min(int(self.bot_right_y / self.map.tile_size) + 1, self.map.cols)
         self.end_cell = (end_row, end_col)
 
     def camera_zoom(self, mode):
         if mode == Camera.IN and self.zoom_counter < ZOOM_IN_LIMIT:
             self.zoom_counter += ZOOM_STEP
-            self.zoom = 2 ** self.zoom_counter
-            self.set_size_x(WINDOW_SIZE_X / self.zoom)
-            self.set_size_y(WINDOW_SIZE_Y / self.zoom)
+            self.zoom_update()
         elif mode == Camera.OUT and self.zoom_counter > ZOOM_OUT_LIMIT:
             self.zoom_counter -= ZOOM_STEP
-            self.zoom = 2 ** self.zoom_counter
-            self.set_size_x(WINDOW_SIZE_X / self.zoom)
-            self.set_size_y(WINDOW_SIZE_Y / self.zoom)
+            self.zoom_update()
+
+    def zoom_update(self):
+        self.zoom = 2 ** self.zoom_counter
+        self.set_size_x(WINDOW_SIZE_X / self.zoom)
+        self.set_size_y(WINDOW_SIZE_Y / self.zoom)
+        self.map.tile_size = int(MAP_CELL_TILE // self.zoom)
+        self.map.rows = MAP_SIZE_X // self.map.tile_size
+        self.map.cols = MAP_SIZE_Y // self.map.tile_size
 
     def set_size_x(self, value):
         self.size_x = int(value)

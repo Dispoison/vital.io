@@ -42,7 +42,13 @@ class Player(Entity):
             if math.sqrt((self.x - food.x)**2 + (self.y - food.y)**2) < self.tile_size:
                 #self.color = (random.randrange(256), random.randrange(256), random.randrange(256))
                 food_obj_list.remove(food)
-                self.tile_size += FOOD_ENERGY * food.tile_size / FOOD_CELL_TILE_HALF
+
+                player_circle_square = math.pi * (self.tile_size / 2) ** 2
+                food_circle_square = math.pi * (food.tile_size / 2) ** 2
+                result_square = player_circle_square + food_circle_square
+                result_diameter = math.sqrt(result_square / math.pi) * 2
+
+                self.tile_size = result_diameter
 
     def wall_collision(self):
         self.movement_left = not self.x - self.tile_size // 2 < 0

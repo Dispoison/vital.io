@@ -12,8 +12,8 @@ class Camera:
     def __init__(self, pl_pos, map):
         self.size_x = WINDOW_SIZE_X
         self.size_y = WINDOW_SIZE_Y
-        self.size_x_half = self.size_x // 2
-        self.size_y_half = self.size_y // 2
+        self.size_x_half = self.size_x / 2
+        self.size_y_half = self.size_y / 2
         self.map = map
 
         self.zoom_counter = 0
@@ -21,8 +21,8 @@ class Camera:
         self.camera_update(*pl_pos)
 
     def camera_update(self, pl_x, pl_y):
-        self.top_left_x = int(pl_x - self.size_x_half)
-        self.top_left_y = int(pl_y - self.size_y_half)
+        self.top_left_x = pl_x - self.size_x_half
+        self.top_left_y = pl_y - self.size_y_half
         self.bot_right_x = self.top_left_x + self.size_x
         self.bot_right_y = self.top_left_y + self.size_y
 
@@ -60,7 +60,7 @@ class Camera:
                 zoom_rounded = 2 ** round(self.zoom_counter)
                 self.set_size_x(WINDOW_SIZE_X / self.zoom)
                 self.set_size_y(WINDOW_SIZE_Y / self.zoom)
-                self.map.tile_size = int(MAP_CELL_TILE // zoom_rounded)
+                self.map.tile_size = int(MAP_CELL_TILE / zoom_rounded)
                 self.map.rows = MAP_SIZE_X // self.map.tile_size
                 self.map.cols = MAP_SIZE_Y // self.map.tile_size
 

@@ -4,6 +4,8 @@ from data.entity import Entity
 
 
 class Player(Entity):
+    __COS_45 = math.cos(math.pi / 4)
+
     def __init__(self, pos, color, tile_size):
         Entity.__init__(self, pos[0], pos[1], color, tile_size)
         self.movement_left = True
@@ -19,17 +21,19 @@ class Player(Entity):
         key = pg.key.get_pressed()
         movement_speed = delta_fps / 100
         x, y = 0, 0
-        if key[pg.K_a]:
-            x = -PLAYER_MOVEMENT_SPEED * movement_speed * self.movement_left
-        if key[pg.K_d]:
-            x = PLAYER_MOVEMENT_SPEED * movement_speed * self.movement_right
-        if key[pg.K_w]:
-            y = -PLAYER_MOVEMENT_SPEED * movement_speed * self.movement_up
-        if key[pg.K_s]:
-            y = PLAYER_MOVEMENT_SPEED * movement_speed * self.movement_down
-        if x != 0 and y != 0:
-            x *= math.cos(math.pi / 4)
-            y *= math.cos(math.pi / 4)
+        if not (key[pg.K_a] and key[pg.K_d]):
+            if key[pg.K_a]:
+                x = -PLAYER_MOVEMENT_SPEED * movement_speed * self.movement_left
+            if key[pg.K_d]:
+                x = PLAYER_MOVEMENT_SPEED * movement_speed * self.movement_right
+        if not (key[pg.K_w] and key[pg.K_s]):
+            if key[pg.K_w]:
+                y = -PLAYER_MOVEMENT_SPEED * movement_speed * self.movement_up
+            if key[pg.K_s]:
+                y = PLAYER_MOVEMENT_SPEED * movement_speed * self.movement_down
+        if x and y:
+            x *= Player.__COS_45
+            y *= Player.__COS_45
         self.x += x
         self.y += y
 

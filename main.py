@@ -19,7 +19,7 @@ drawer = Drawer(pg, camera)
 while True:
     sc.fill(map.background_color)
 
-    camera.camera_update(player.get_pos())
+    camera.camera_update(*player.get_pos())
     Food.food_list_update(FOOD_AMOUNT)
     Food.food_list_on_screen_update((camera.top_left_x, camera.top_left_y, camera.bot_right_x, camera.bot_right_y))
 
@@ -34,6 +34,7 @@ while True:
             exit()
         if event.type == pg.MOUSEBUTTONDOWN:
             if event.button == 4 or event.button == 5:
-                camera.camera_zoom(Camera.ZOOM_MODE[event.button])
+                camera.camera_zoom(Camera.ZOOM_MODE[event.button], 1000 / delta_fps)
     pg.display.set_caption(f'{WINDOW_TITLE} - {"%.0f" % clock.get_fps()}')
+    camera.zoom_update()
 

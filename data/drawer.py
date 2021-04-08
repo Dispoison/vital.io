@@ -42,7 +42,7 @@ class Drawer:
         circle_x = (player.x - self.camera.top_left_x) * self.camera.zoom
         circle_y = (player.y - self.camera.top_left_y) * self.camera.zoom
         circle = circle_x, circle_y
-        circle_radius = player.tile_size * self.camera.zoom
+        circle_radius = max(player.tile_size * self.camera.zoom, 1)
 
         self.pg.draw.circle(sc, player.color, circle, circle_radius)
 

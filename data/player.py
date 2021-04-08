@@ -17,7 +17,7 @@ class Player(Entity):
 
     def movement(self, pg, delta_fps):
         key = pg.key.get_pressed()
-        movement_speed = delta_fps / 500
+        movement_speed = delta_fps / 100
         x, y = 0, 0
         if key[pg.K_a]:
             x = -PLAYER_MOVEMENT_SPEED * movement_speed * self.movement_left
@@ -40,13 +40,9 @@ class Player(Entity):
     def food_collision(self, food_obj_list, food_obj_on_screen_list):
         for food in food_obj_on_screen_list:
             if math.sqrt((self.x - food.x)**2 + (self.y - food.y)**2) < self.tile_size:
-                #self.color = (random.randrange(256), random.randrange(256), random.randrange(256))
                 food_obj_list.remove(food)
 
-                player_circle_square = math.pi * (self.tile_size / 2) ** 2
-                food_circle_square = math.pi * (food.tile_size / 2) ** 2
-                result_square = player_circle_square + food_circle_square
-                result_diameter = math.sqrt(result_square / math.pi) * 2
+                result_diameter = math.sqrt(self.tile_size ** 2 + (food.tile_size * FOOD_ENERGY) ** 2)
 
                 self.tile_size = result_diameter
 

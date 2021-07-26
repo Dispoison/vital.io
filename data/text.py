@@ -1,5 +1,5 @@
 import pygame
-
+from cfg.config import *
 
 class Text:
     def __init__(self, display, text, size, font, color, x, y, state=None, is_selectable=True):
@@ -21,9 +21,9 @@ class Text:
 
     def draw(self):
         if self.is_mouse_over:
-            self._temp_surface.fill((160, 160, 120))
+            self._temp_surface.fill(MENU_TEXT_BACKGROUND_COLOR_SELECTED)
         else:
-            self._temp_surface.fill((0, 0, 0))
+            self._temp_surface.fill(MENU_TEXT_BACKGROUND_COLOR)
         self._temp_surface.blit(self._text, (0, 0))
         self.text_rect.center = (self.x, self.y)
         self.display.blit(self._temp_surface, self.text_rect)

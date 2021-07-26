@@ -10,7 +10,7 @@ from data.menu import *
 class Game:
     def __init__(self):
         pg.init()
-        self.running, self.playing = True, True
+        self.running, self.playing = True, False
         self.display = pg.Surface([WINDOW_SIZE_X, WINDOW_SIZE_Y])
         self.window = pg.display.set_mode([WINDOW_SIZE_X, WINDOW_SIZE_Y])
         self.clock = pg.time.Clock()
@@ -24,7 +24,7 @@ class Game:
         self.options = OptionsMenu(self)
         self.credits = CreditsMenu(self)
         self.current_menu = self.main_menu
-        self.keys = {'return': False, 'backspace': False, 'down': False, 'up': False}
+        self.keys = {'return': False, 'escape': False, 'down': False, 'up': False, 'mouse_left_up': False}
 
     def game_loop(self):
         while self.playing:
@@ -53,18 +53,23 @@ class Game:
                 self.running, self.playing = False, False
                 self.current_menu.run_display = False
             if event.type == pg.MOUSEBUTTONDOWN:
-                if event.button == 4 or event.button == 5:
+                if self.playing and event.button == 4 or event.button == 5:
                     self.camera.zoom(Camera.ZOOM_MODE[event.button], 1000 / self.delta_fps)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     self.keys['return'] = True
-                if event.key == pygame.K_BACKSPACE:
-                    self.keys['backspace'] = True
+                if event.key == pygame.K_ESCAPE:
+                    self.keys['escape'] = True
+                    if self.playing:
+                        self.playing, self.current_menu.run_display = False, True
+                        self.current_menu = self.main_menu
+                        self.current_menu.state = 'Main'
                 if event.key == pygame.K_DOWN:
                     self.keys['down'] = True
                 if event.key == pygame.K_UP:
                     self.keys['up'] = True
-
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                self.keys['mouse_left_up'] = True
 
     def reset_keys(self):
         self.keys = dict.fromkeys(self.keys, False)

@@ -9,39 +9,41 @@ class Menu:
         self.run_display = True
         self.offset = - 100
         self.font_name = 'fonts/muller-extrabold.ttf'
-        self.state = 'Start'
 
     def blit_screen(self):
         self.game.window.blit(self.game.display, (0, 0))
         pygame.display.update()
+        self.game.reset_keys()
 
     def check_mouse_input(self, texts):
         for text in texts:
-            if text.is_selectable:
-                text.is_mouse_over = text.text_rect.collidepoint(pygame.mouse.get_pos())
-                if pygame.mouse.get_pressed()[0]:
+            if text.is_selectable and text.text_rect.collidepoint(pygame.mouse.get_pos()):
+                text.is_mouse_over = True
+                if self.game.keys['mouse_left_up']:
                     self.state = text.state
-                    self.state_routing()
+            else:
+                text.is_mouse_over = False
 
 
 class MainMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
+        self.state = 'Main'
         self.main_menu_text_x, self.main_menu_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF - 70
         self.start_text_x, self.start_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF + 30
         self.options_text_x, self.options_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF + 70
         self.credits_text_x, self.credits_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF + 110
         self.quit_text_x, self.quit_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF + 150
 
-        self.main_menu_text = Text(game.display, 'Main Menu', 40, self.font_name, SCORE_TEXT_COLOR,
+        self.main_menu_text = Text(game.display, 'Main Menu', 40, self.font_name, MENU_TEXT_COLOR,
                                    self.main_menu_text_x, self.main_menu_text_y, None, False)
-        self.start_game_text = Text(game.display, 'Start Game', 40, self.font_name, SCORE_TEXT_COLOR,
+        self.start_game_text = Text(game.display, 'Start Game', 40, self.font_name, MENU_TEXT_COLOR,
                                     self.start_text_x, self.start_text_y, 'Start')
-        self.options_text = Text(game.display, 'Options', 40, self.font_name, SCORE_TEXT_COLOR,
+        self.options_text = Text(game.display, 'Options', 40, self.font_name, MENU_TEXT_COLOR,
                                  self.options_text_x, self.options_text_y, 'Options')
-        self.credits_text = Text(game.display, 'Credits', 40, self.font_name, SCORE_TEXT_COLOR,
+        self.credits_text = Text(game.display, 'Credits', 40, self.font_name, MENU_TEXT_COLOR,
                                  self.credits_text_x, self.credits_text_y, 'Credits')
-        self.quit_text = Text(game.display, 'Quit', 40, self.font_name, SCORE_TEXT_COLOR,
+        self.quit_text = Text(game.display, 'Quit', 40, self.font_name, MENU_TEXT_COLOR,
                               self.quit_text_x, self.quit_text_y, 'Quit')
         self.texts = [self.main_menu_text, self.start_game_text, self.options_text, self.credits_text, self.quit_text]
 
@@ -51,6 +53,7 @@ class MainMenu(Menu):
             self.game.check_events()
             self.check_keys_input()
             self.check_mouse_input(self.texts)
+            self.state_routing()
             self.game.display.fill((0, 0, 0))
             self.main_menu_text.draw()
             self.start_game_text.draw()
@@ -61,15 +64,19 @@ class MainMenu(Menu):
 
     def check_keys_input(self):
         if self.game.keys['return']:
-            self.state_routing()
+            for text in self.texts:
+                if text.is_mouse_over:
+                    self.state = text.state
 
     def state_routing(self):
         if self.state == 'Start':
             self.game.playing = True
         elif self.state == 'Options':
-            self.game.curr_menu = self.game.options
+            self.game.current_menu = self.game.options
         elif self.state == 'Credits':
-            self.game.curr_menu = self.game.credits
+            self.game.current_menu = self.game.credits
+        elif self.state == 'Quit':
+            self.game.running, self.game.playing = False, False
         self.run_display = False
 
 
@@ -77,38 +84,42 @@ class OptionsMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
         self.state = 'Volume'
-        self.options_text_x, self.options_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF - 30
-        self.volume_text_x, self.volume_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF + 20
+        self.options_text_x, self.options_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF - 70
+        self.volume_text_x, self.volume_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF
         self.controls_text_x, self.controls_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF + 40
 
-        self.options_text = Text(game.display, 'Options', 20, self.font_name, SCORE_TEXT_COLOR,
-                                 self.options_text_x, self.options_text_y)
-        self.volume_text = Text(game.display, 'Volume', 20, self.font_name, SCORE_TEXT_COLOR,
+        self.options_text = Text(game.display, 'Options', 40, self.font_name, MENU_TEXT_COLOR,
+                                 self.options_text_x, self.options_text_y, None, False)
+        self.volume_text = Text(game.display, 'Volume', 40, self.font_name, MENU_TEXT_COLOR,
                                 self.volume_text_x, self.volume_text_y)
-        self.controls_text = Text(game.display, 'Controls', 20, self.font_name, SCORE_TEXT_COLOR,
+        self.controls_text = Text(game.display, 'Controls', 40, self.font_name, MENU_TEXT_COLOR,
                                   self.controls_text_x, self.controls_text_y)
+
+        self.texts = [self.options_text, self.volume_text, self.controls_text]
 
     def display_menu(self):
         self.run_display = True
         while self.run_display:
             self.game.check_events()
-            self.check_input()
+            self.check_keys_input()
+            self.check_mouse_input(self.texts)
             self.game.display.fill((0, 0, 0))
             self.options_text.draw()
             self.volume_text.draw()
             self.controls_text.draw()
             self.blit_screen()
 
-    def check_input(self):
-        if self.game.BACK_KEY:
-            self.game.curr_menu = self.game.main_menu
+    def check_keys_input(self):
+        if self.game.keys['escape']:
+            self.game.current_menu = self.game.main_menu
+            self.game.current_menu.state = 'Main'
             self.run_display = False
-        elif self.game.UP_KEY or self.game.DOWN_KEY:
+        elif self.game.keys['up'] or self.game.keys['down']:
             if self.state == 'Volume':
                 self.state = 'Controls'
             elif self.state == 'Controls':
                 self.state = 'Volume'
-        elif self.game.START_KEY:
+        elif self.game.keys['return']:
             # TO-DO: Create a Volume Menu and a Controls Menu
             pass
 
@@ -116,22 +127,25 @@ class OptionsMenu(Menu):
 class CreditsMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
-        self.credits_text_x, self.credits_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF - 20
-        self.info_text_x, self.info_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF + 10
+        self.credits_text_x, self.credits_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF - 40
+        self.info_text_x, self.info_text_y = WINDOW_SIZE_X_HALF, WINDOW_SIZE_Y_HALF + 40
 
-        self.credits_text = Text(game.display, 'Credits', 20, self.font_name, SCORE_TEXT_COLOR,
+        self.credits_text = Text(game.display, 'Credits', 40, self.font_name, MENU_TEXT_COLOR,
                                  self.credits_text_x, self.credits_text_y)
-        self.info_text = Text(game.display, 'Made by Dispoison', 20, self.font_name, SCORE_TEXT_COLOR,
+        self.info_text = Text(game.display, 'Made by Dispoison', 40, self.font_name, MENU_TEXT_COLOR,
                               self.info_text_x, self.info_text_y)
+
+        self.texts = [self.credits_text, self.info_text]
 
     def display_menu(self):
         self.run_display = True
         while self.run_display:
             self.game.check_events()
-            if self.game.START_KEY or self.game.BACK_KEY:
-                self.game.curr_menu = self.game.main_menu
+            if self.game.keys['escape']:
+                self.game.current_menu = self.game.main_menu
+                self.game.current_menu.state = 'Main'
                 self.run_display = False
-            self.game.display.fill(self.game.BLACK)
+            self.game.display.fill((0, 0, 0))
             self.credits_text.draw()
             self.info_text.draw()
             self.blit_screen()

@@ -7,13 +7,13 @@ class Drawer:
         self.camera = camera
         self.font = pg.font.Font('freesansbold.ttf', 32)
 
-    def draw(self, sc, map, food_obj_list, player):
-        self.draw_grid(sc, map)
+    def draw(self, sc, map_, food_obj_list, player):
+        self.draw_grid(sc, map_)
         self.draw_food(sc, food_obj_list)
         self.draw_player(sc, player)
         self.draw_player_score(sc, player)
 
-    def draw_grid(self, sc, map):
+    def draw_grid(self, sc, map_):
         start_row = self.camera.start_cell[0]
         start_col = self.camera.start_cell[1]
         end_row = self.camera.end_cell[0]
@@ -21,28 +21,28 @@ class Drawer:
 
         for x in range(start_row, end_row):
             for y in range(start_col, end_col):
-                rect_x = (x * map.tile_size - self.camera.top_left_x) * self.camera.zoom
-                rect_y = (y * map.tile_size - self.camera.top_left_y) * self.camera.zoom
-                rect_size = map.tile_size * self.camera.zoom
+                rect_x = (x * map_.tile_size - self.camera.top_left_x) * self.camera.zoom_rate
+                rect_y = (y * map_.tile_size - self.camera.top_left_y) * self.camera.zoom_rate
+                rect_size = map_.tile_size * self.camera.zoom_rate
                 rect = rect_x, rect_y, rect_size, rect_size
                 border_radius = MAP_CELL_TILE_RADIUS
 
-                self.pg.draw.rect(sc, map.tile_color, rect, MAP_CELL_WIDTH, border_radius=border_radius)
+                self.pg.draw.rect(sc, map_.tile_color, rect, MAP_CELL_WIDTH, border_radius=border_radius)
 
     def draw_food(self, sc, food_obj_list):
         for food in food_obj_list:
-            circle_x = (food.x - self.camera.top_left_x) * self.camera.zoom
-            circle_y = (food.y - self.camera.top_left_y) * self.camera.zoom
+            circle_x = (food.x - self.camera.top_left_x) * self.camera.zoom_rate
+            circle_y = (food.y - self.camera.top_left_y) * self.camera.zoom_rate
             circle = circle_x, circle_y
-            circle_diameter = max(food.tile_size * self.camera.zoom, 1)
+            circle_diameter = max(food.tile_size * self.camera.zoom_rate, 1)
 
             self.pg.draw.circle(sc, food.color, circle, circle_diameter)
 
     def draw_player(self, sc, player):
-        circle_x = (player.x - self.camera.top_left_x) * self.camera.zoom
-        circle_y = (player.y - self.camera.top_left_y) * self.camera.zoom
+        circle_x = (player.x - self.camera.top_left_x) * self.camera.zoom_rate
+        circle_y = (player.y - self.camera.top_left_y) * self.camera.zoom_rate
         circle = circle_x, circle_y
-        circle_radius = max(player.tile_size * self.camera.zoom, 1)
+        circle_radius = max(player.tile_size * self.camera.zoom_rate, 1)
 
         self.pg.draw.circle(sc, player.color, circle, circle_radius)
 
